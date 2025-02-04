@@ -1,20 +1,30 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Link, useLocation } from "react-router-dom";
 import RockPaperScissors from "./components/Game/RockPaperScissors";
 import SpinTheWheel from "./components/Game/SpinTheWheel";
 
 const App: React.FC = () => {
     return (
         <Router>
-            <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
-                <h1 className="text-4xl font-bold mb-6">Who Wants to Run Stand-Up?</h1>
-                <Routes>
-                    <Route path="/rps" element={<RockPaperScissors />} />
-                    <Route path="/wheel" element={<SpinTheWheel />} />
-                    <Route path="/" element={<Home />} />
-                </Routes>
-            </div>
+            <MainContent />
         </Router>
+    );
+};
+
+const MainContent: React.FC = () => {
+    const location = useLocation(); // Get the current route
+
+    return (
+        <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
+            {/* Show title only on the home page */}
+            {location.pathname === "/" && <h1 className="text-4xl font-bold mb-6">Who Wants to Run Stand-Up?</h1>}
+
+            <Routes>
+                <Route path="/rps" element={<RockPaperScissors />} />
+                <Route path="/wheel" element={<SpinTheWheel />} />
+                <Route path="/" element={<Home />} />
+            </Routes>
+        </div>
     );
 };
 
