@@ -12,7 +12,16 @@ const SpinTheWheel: React.FC = () => {
     const [spinning, setSpinning] = useState(false);
     const [username, setUsername] = useState<string>("");
 
-    // Cleanup function to reset game state
+    const clearPlayers = () => {
+        if (client) {
+            client.publish({
+                destination: "/app/clear-players",
+                body: ""
+            });
+        }
+        resetGame();
+    };
+
     const resetGame = () => {
         setPlayers([]);
         setWinner(null);
@@ -65,7 +74,7 @@ const SpinTheWheel: React.FC = () => {
         if (client && players.length > 0) {
             client.publish({
                 destination: "/app/spin",
-                body: "", // No body needed—backend uses active players
+                body: ""
             });
         }
     };
@@ -152,8 +161,7 @@ const SpinTheWheel: React.FC = () => {
                 Spin!
             </button>
 
-            {/* When clicking "Back to main menu", call resetGame to clear players */}
-            <Link to="/" onClick={resetGame}>
+            <Link to="/" onClick={clearPlayers}>
                 <button className="bg-green-500 px-4 py-2 mt-4 rounded">
                     Back to main menu
                 </button>
