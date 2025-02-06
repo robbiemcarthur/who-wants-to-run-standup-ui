@@ -52,7 +52,7 @@
     "@types/axios": "^0.14.4",
     "@types/css-modules": "^1.0.5",
     "autoprefixer": "^9.8.8",
-    "postcss": "^7.0.39",
+    "postcss": "^8.4.31",
     "postcss-cli": "^11.0.0",
     "postcss-loader": "^8.1.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17"
