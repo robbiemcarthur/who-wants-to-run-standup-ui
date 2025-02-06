@@ -57,5 +57,5 @@
     "postcss-loader": "^8.1.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17"
   },
-  "proxy": "https://who-wants-to-run-stand-up-svc-d9d35b0792e6.herokuapp.com/"
+  "proxy": "http://localhost:8080"
 }

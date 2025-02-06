@@ -21,8 +21,11 @@ const RockPaperScissors: React.FC = () => {
     const [gameState, setGameState] = useState<"waiting" | "playing" | "result">("waiting");
 
     useEffect(() => {
+        const backendUrl =
+            process.env.REACT_APP_BACKEND_URL ||
+            '';
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS('/game'),
+            webSocketFactory: () => new SockJS(backendUrl + '/game'),
             onConnect: () => {
                 console.log("Connected to WebSocket");
                 stompClient.subscribe("/topic/game-results", (message) => {

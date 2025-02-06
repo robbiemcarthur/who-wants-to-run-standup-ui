@@ -29,8 +29,11 @@ const SpinTheWheel: React.FC = () => {
     };
 
     useEffect(() => {
+        const backendUrl =
+            process.env.REACT_APP_BACKEND_URL ||
+            '';
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS('/game'),
+            webSocketFactory: () => new SockJS(backendUrl + '/game'),
             onConnect: () => {
                 console.log("Connected to WebSocket");
 
