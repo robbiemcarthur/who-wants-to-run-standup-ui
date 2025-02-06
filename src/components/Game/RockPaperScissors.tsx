@@ -22,7 +22,7 @@ const RockPaperScissors: React.FC = () => {
 
     useEffect(() => {
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS("http://localhost:8080/game"),
+            webSocketFactory: () => new SockJS(process.env.REACT_APP_API_URL + '/game'),
             onConnect: () => {
                 console.log("Connected to WebSocket");
                 stompClient.subscribe("/topic/game-results", (message) => {
