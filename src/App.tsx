@@ -37,7 +37,7 @@ const Home: React.FC = () => {
                     <button className="bg-blue-500 px-6 py-3 rounded hover:bg-blue-600">Rock Paper Scissors</button>
                 </Link>
                 <Link to="/wheel">
-                    <button className="bg-green-500 px-6 py-3 rounded hover:bg-green-600">Spin The Wheel</button>
+                    <button className="bg-green-500 px-6 py-3 rounded hover:bg-green-600">Wheel of Misfortune</button>
                 </Link>
             </div>
         </div>
