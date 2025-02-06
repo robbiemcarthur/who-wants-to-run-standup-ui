@@ -21,7 +21,7 @@ jobs:
     - name: Build
       run: |
         npm install --legacy-peer-deps
-        npm build
+        react-scripts build
 
     - name: Deploy to Netlify
       uses: nwtgck/actions-netlify@v1.2.3
