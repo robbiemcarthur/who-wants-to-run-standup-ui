@@ -115,7 +115,7 @@ const SpinTheWheel: React.FC = () => {
 
     return (
         <div className="spin-the-wheel-container">
-            <h2 className="subtitle">Spin The Wheel</h2>
+            <h2 className="subtitle">Wheel of Misfortune</h2>
 
             {/* Input and join button */}
             <div className="input-container">
