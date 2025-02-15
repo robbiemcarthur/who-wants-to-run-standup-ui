@@ -3,14 +3,8 @@ import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { motion, AnimatePresence } from "framer-motion";
 import {Link} from "react-router-dom";
-
-interface GameResult {
-    player1: string;
-    move1: string;
-    player2: string;
-    move2: string;
-    winner: string;
-}
+import {GameState} from "../../enum/GameState";
+import {GameResult} from "../../model/GameResult";
 
 const RockPaperScissors: React.FC = () => {
     const [client, setClient] = useState<Client | null>(null);
@@ -18,7 +12,7 @@ const RockPaperScissors: React.FC = () => {
     const [move, setMove] = useState<string | null>(null);
     const [result, setResult] = useState<GameResult | null>(null);
     const [countdown, setCountdown] = useState<number | null>(null);
-    const [gameState, setGameState] = useState<"waiting" | "playing" | "result">("waiting");
+    const [gameState, setGameState] = useState<GameState.WAITING | GameState.PLAYING | GameState.RESULT>(GameState.WAITING);
 
     useEffect(() => {
         const backendUrl =
@@ -30,7 +24,7 @@ const RockPaperScissors: React.FC = () => {
                 console.log("Connected to WebSocket");
                 stompClient.subscribe("/topic/game-results", (message) => {
                     setCountdown(3);
-                    setGameState("playing");
+                    setGameState(GameState.PLAYING);
 
                     let counter = 3;
                     const interval = setInterval(() => {
@@ -39,7 +33,7 @@ const RockPaperScissors: React.FC = () => {
                         if (counter === 0) {
                             clearInterval(interval);
                             setResult(JSON.parse(message.body));
-                            setGameState("result");
+                            setGameState(GameState.RESULT);
                         }
                     }, 1000);
                 });
@@ -51,7 +45,7 @@ const RockPaperScissors: React.FC = () => {
 
         return () => {
             if (stompClient) {
-                stompClient.deactivate(); // Now properly cleaned up
+                stompClient.deactivate();
             }
         };
     }, []);
@@ -60,7 +54,7 @@ const RockPaperScissors: React.FC = () => {
     const sendMove = (choice: string) => {
         if (client && client.connected && username) {
             setMove(choice);
-            setGameState("playing");
+            setGameState(GameState.PLAYING);
             client.publish({
                 destination: "/app/play",
                 body: JSON.stringify({ player: username, choice })
@@ -95,14 +89,14 @@ const RockPaperScissors: React.FC = () => {
                     />
                     <button
                         className="bg-green-500 px-4 py-2 rounded hover:bg-green-600"
-                        onClick={() => username && setGameState("playing")}
+                        onClick={() => username && setGameState(GameState.PLAYING)}
                     >
                         Start Game
                     </button>
                 </motion.div>
             )}
 
-            {gameState === "playing" && (
+            {gameState === GameState.PLAYING && (
                 <AnimatePresence>
                     {/* Show player's choice */}
                     {move && (
@@ -156,7 +150,7 @@ const RockPaperScissors: React.FC = () => {
                 </AnimatePresence>
             )}
 
-            {gameState === "result" && result && (
+            {gameState === GameState.RESULT && result && (
                 <motion.div
                     key="result"
                     initial={{opacity: 0}}
@@ -176,7 +170,7 @@ const RockPaperScissors: React.FC = () => {
                     <button
                         className="bg-gray-700 px-4 py-2 rounded mt-4 hover:bg-gray-600"
                         onClick={() => {
-                            setGameState("waiting");
+                            setGameState(GameState.WAITING);
                             setResult(null);
                             setMove(null);
                         }}

@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes, Link, useLocation } from "react-router-dom";
-import RockPaperScissors from "./components/Game/RockPaperScissors";
-import SpinTheWheel from "./components/Game/SpinTheWheel";
+import RockPaperScissors from "./components/RockPaperScissors/RockPaperScissors";
+import SpinTheWheel from "./components/SpinTheWheel/SpinTheWheel";
 
 const App: React.FC = () => {
     return (
