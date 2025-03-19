@@ -5,6 +5,7 @@ import {GameState} from "../../enum/GameState";
 import {GameResult} from "../../model/GameResult";
 import useStompClient from "../../hooks/useStompClient";
 import UsernameInputForm from "./UseInputForm";
+import RockPaperScissorsButtons from "./RockPaperScissorsButtons";
 
 const RockPaperScissors: React.FC = () => {
     const [username, setUsername] = useState<string>("");
@@ -97,24 +98,7 @@ const RockPaperScissors: React.FC = () => {
                             exit={{opacity: 0}}
                             className="flex space-x-4"
                         >
-                            <button
-                                className="bg-blue-500 px-6 py-3 rounded hover:bg-blue-600"
-                                onClick={() => sendMove("rock")}
-                            >
-                                🪨 Rock
-                            </button>
-                            <button
-                                className="bg-red-500 px-6 py-3 rounded hover:bg-red-600"
-                                onClick={() => sendMove("paper")}
-                            >
-                                📄 Paper
-                            </button>
-                            <button
-                                className="bg-yellow-500 px-6 py-3 rounded hover:bg-yellow-600"
-                                onClick={() => sendMove("scissors")}
-                            >
-                                ✂️ Scissors
-                            </button>
+                            <RockPaperScissorsButtons onSelect={sendMove}/>
                         </motion.div>
                     ) : (
                         <motion.div
