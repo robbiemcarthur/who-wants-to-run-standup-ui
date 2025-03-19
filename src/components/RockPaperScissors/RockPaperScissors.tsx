@@ -4,8 +4,9 @@ import {Link} from "react-router-dom";
 import {GameState} from "../../enum/GameState";
 import {GameResult} from "../../model/GameResult";
 import useStompClient from "../../hooks/useStompClient";
-import UsernameInputForm from "./UseInputForm";
+import StartGame from "./StartGame";
 import PlayRockPaperScissors from "./PlayRockPaperScissors";
+import DisplayResults from "./DisplayResults";
 
 const RockPaperScissors: React.FC = () => {
     const [username, setUsername] = useState<string>("");
@@ -65,50 +66,27 @@ const RockPaperScissors: React.FC = () => {
             </motion.h1>
 
             {gameState === GameState.WAITING && (
-                <motion.div
-                    initial={{opacity: 0}}
-                    animate={{opacity: 1}}
-                    className="flex flex-col items-center">
-                    <UsernameInputForm
-                        username={username}
-                        onChange={setUsername}
-                        onStart={() => username && setGameState(GameState.PLAYING)}
-                    />
-                </motion.div>
+                <StartGame
+                    username={username}
+                    onChange={setUsername}
+                    onStart={() => username && setGameState(GameState.PLAYING)}
+                />
             )}
 
             {gameState === GameState.PLAYING && (
-                <PlayRockPaperScissors sendMove={sendMove} move={move} countdown={countdown} />
+                <PlayRockPaperScissors
+                    sendMove={sendMove}
+                    move={move}
+                    countdown={countdown}
+                />
             )}
 
             {gameState === GameState.RESULT && result && (
-                <motion.div
-                    key="result"
-                    initial={{opacity: 0}}
-                    animate={{opacity: 1}}
-                    exit={{opacity: 0}}
-                    className="mt-6 text-center"
-                >
-                    <p className="text-xl">{result.player1} chose {result.move1}</p>
-                    <p className="text-xl">{result.player2} chose {result.move2}</p>
-                    <motion.h2
-                        className="text-3xl font-bold mt-4"
-                        initial={{scale: 0}}
-                        animate={{scale: 1.2}}
-                    >
-                        {result.winner}
-                    </motion.h2>
-                    <button
-                        className="bg-gray-700 px-4 py-2 rounded mt-4 hover:bg-gray-600"
-                        onClick={() => {
-                            setGameState(GameState.WAITING);
-                            setResult(null);
-                            setMove(null);
-                        }}
-                    >
-                        Play Again
-                    </button>
-                </motion.div>
+                <DisplayResults
+                    result={result}
+                    setResult={setResult}
+                    setMove={setMove}
+                    setGameState={setGameState}/>
             )}
             <Link to="/">
                 <button className="bg-green-500 px-4 py-2 mt-4 rounded">
