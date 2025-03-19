@@ -1,28 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { Client } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
-import { motion, AnimatePresence } from "framer-motion";
+import React, {useEffect, useState} from "react";
+import {AnimatePresence, motion} from "framer-motion";
 import {Link} from "react-router-dom";
 import {GameState} from "../../enum/GameState";
 import {GameResult} from "../../model/GameResult";
+import useStompClient from "../../hooks/useStompClient";
+import UsernameInputForm from "./UseInputForm";
 
 const RockPaperScissors: React.FC = () => {
-    const [client, setClient] = useState<Client | null>(null);
     const [username, setUsername] = useState<string>("");
     const [move, setMove] = useState<string | null>(null);
     const [result, setResult] = useState<GameResult | null>(null);
     const [countdown, setCountdown] = useState<number | null>(null);
     const [gameState, setGameState] = useState<GameState.WAITING | GameState.PLAYING | GameState.RESULT>(GameState.WAITING);
 
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || "";
+    const client = useStompClient(`${backendUrl}/game`);
+
     useEffect(() => {
-        const backendUrl =
-            process.env.REACT_APP_BACKEND_URL ||
-            '';
-        const stompClient = new Client({
-            webSocketFactory: () => new SockJS(backendUrl + '/game'),
-            onConnect: () => {
+        if (client) {
+            client.onConnect = () => {
                 console.log("Connected to WebSocket");
-                stompClient.subscribe("/topic/game-results", (message) => {
+                client.subscribe("/topic/game-results", (message) => {
                     setCountdown(3);
                     setGameState(GameState.PLAYING);
 
@@ -37,18 +35,9 @@ const RockPaperScissors: React.FC = () => {
                         }
                     }, 1000);
                 });
-            }
-        });
-
-        stompClient.activate();
-        setClient(stompClient);
-
-        return () => {
-            if (stompClient) {
-                stompClient.deactivate();
-            }
-        };
-    }, []);
+            };
+        }
+    }, [client]);
 
 
     const sendMove = (choice: string) => {
@@ -57,7 +46,7 @@ const RockPaperScissors: React.FC = () => {
             setGameState(GameState.PLAYING);
             client.publish({
                 destination: "/app/play",
-                body: JSON.stringify({ player: username, choice })
+                body: JSON.stringify({player: username, choice})
             });
         } else {
             console.error("STOMP client is not connected yet!");
@@ -74,25 +63,16 @@ const RockPaperScissors: React.FC = () => {
                 Rock Paper Scissors
             </motion.h1>
 
-            {gameState === "waiting" && (
+            {gameState === GameState.WAITING && (
                 <motion.div
                     initial={{opacity: 0}}
                     animate={{opacity: 1}}
-                    className="flex flex-col items-center"
-                >
-                    <input
-                        type="text"
-                        placeholder="Enter Name"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="mb-4 p-2 text-black rounded"
+                    className="flex flex-col items-center">
+                    <UsernameInputForm
+                        username={username}
+                        onChange={setUsername}
+                        onStart={() => username && setGameState(GameState.PLAYING)}
                     />
-                    <button
-                        className="bg-green-500 px-4 py-2 rounded hover:bg-green-600"
-                        onClick={() => username && setGameState(GameState.PLAYING)}
-                    >
-                        Start Game
-                    </button>
                 </motion.div>
             )}
 
