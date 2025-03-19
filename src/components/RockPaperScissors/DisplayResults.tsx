@@ -5,12 +5,13 @@ import {GameResult} from "../../model/GameResult";
 
 interface DisplayResultsProps {
     result: GameResult;
+    setCountdown: (result: number | null) => void;
     setResult: (result: GameResult | null) => void;
     setMove: (move: string | null) => void;
     setGameState: (state: GameState) => void;
 }
 
-const DisplayResults: React.FC<DisplayResultsProps> = ({result, setResult, setMove, setGameState}) => {
+const DisplayResults: React.FC<DisplayResultsProps> = ({result, setCountdown, setResult, setMove, setGameState}) => {
     return (
         <motion.div
             key="result"
@@ -34,6 +35,7 @@ const DisplayResults: React.FC<DisplayResultsProps> = ({result, setResult, setMo
                     setGameState(GameState.WAITING);
                     setResult(null);
                     setMove(null);
+                    setCountdown(null);
                 }}
             >
                 Play Again

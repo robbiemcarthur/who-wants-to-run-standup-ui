@@ -86,6 +86,7 @@ const RockPaperScissors: React.FC = () => {
                     result={result}
                     setResult={setResult}
                     setMove={setMove}
+                    setCountdown={setCountdown}
                     setGameState={setGameState}/>
             )}
             <Link to="/">
