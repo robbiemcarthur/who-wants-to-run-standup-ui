@@ -7,6 +7,7 @@ import useStompClient from "../../hooks/useStompClient";
 import StartGame from "./StartGame";
 import PlayRockPaperScissors from "./PlayRockPaperScissors";
 import DisplayResults from "./DisplayResults";
+import Config from "../../Config";
 
 const RockPaperScissors: React.FC = () => {
     const [username, setUsername] = useState<string>("");
@@ -15,7 +16,7 @@ const RockPaperScissors: React.FC = () => {
     const [countdown, setCountdown] = useState<number | null>(null);
     const [gameState, setGameState] = useState<GameState.WAITING | GameState.PLAYING | GameState.RESULT>(GameState.WAITING);
 
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || "";
+    const backendUrl = Config.backendUrl;
     const client = useStompClient(`${backendUrl}/game`);
 
     useEffect(() => {
