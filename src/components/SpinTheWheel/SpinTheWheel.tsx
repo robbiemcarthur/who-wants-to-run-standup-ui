@@ -143,11 +143,6 @@ const SpinTheWheel: React.FC = () => {
                 </button>
             </div>
 
-            <p className="players-label">Players:</p>
-            <p className="players-list">
-                {players.join(", ") || "No players yet"}
-            </p>
-
             {/* Wheel container */}
             <div className="wheel-container">
                 <div className="arrow">▼</div>
