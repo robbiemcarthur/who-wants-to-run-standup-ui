@@ -30,44 +30,56 @@ const SpinTheWheel: React.FC = () => {
             webSocketFactory: () => new SockJS(backendUrl + "/game"),
             onConnect: () => {
                 console.log("Connected to WebSocket");
-
                 // Subscribe to updates of the players list.
+
                 stompClient.subscribe("/topic/players", (message) => {
                     const data = JSON.parse(message.body);
                     setPlayers(data);
                 });
 
+                stompClient.publish({
+                    destination: "/app/initial-players",
+                });
+
                 // Subscribe to the winner result.
                 stompClient.subscribe("/topic/wheel-results", (message) => {
                     const winningPlayer = message.body;
-                    setWinner(winningPlayer);
-
-                    // Use our latest players array.
                     const currentPlayers = playersRef.current;
                     const numPlayers = currentPlayers.length;
-                    // Calculate the slice angle (if one player, sliceAngle=360)
+
+                    // Calculate slice angle
                     const sliceAngle = numPlayers === 1 ? 360 : 360 / numPlayers;
-                    // Determine the index of the winner; if not found, default to 0.
+
+                    // Determine the winning index
                     let winningIndex = currentPlayers.indexOf(winningPlayer);
                     if (winningIndex === -1) winningIndex = 0;
-                    // The center of the winner's slice:
-                    const targetAngle = winningIndex * sliceAngle + sliceAngle / 2;
-                    // To bring that center to the top (0° where the arrow is),
-                    // we need to rotate the wheel so that 360 - targetAngle is at 0.
-                    // We'll add several full spins (for dramatic effect).
-                    const fullSpins = 5;
-                    const finalRotation = fullSpins * 360 + (360 - targetAngle);
 
-                    // Start spinning: animate to the finalRotation over 3 seconds.
+                    // Calculate the target angle where the arrow lands at the winner's segment
+                    const targetAngle = winningIndex * sliceAngle + sliceAngle / 2;
+
+                    // Define the spinning animation
+                    const fullSpins = 5; // Number of full spins for dramatic effect
+                    const finalRotation = fullSpins * 360 + (360 - targetAngle);
+                    const spinDuration = 3000; // 3 seconds for spinning
+
+                    // Start spinning
                     setIsSpinning(true);
                     setCurrentRotation(finalRotation);
 
-                    // After spin animation (3 seconds) plus a 10-second pause, animate back to 0.
+                    // Calculate the time to show the winner
+                    const timeToHitWinner =
+                        spinDuration * (1 - (360 - targetAngle) / finalRotation);
+
+                    // Set the winner when the arrow lands on their segment
                     setTimeout(() => {
-                        // Animate back to 0 over, say, 2 seconds.
-                        setCurrentRotation(0);
-                        setIsSpinning(false);
-                    }, 13000); // 3 seconds for spin + 10 seconds pause = 13 seconds total
+                        setWinner(winningPlayer);
+                    }, timeToHitWinner);
+
+                    // Add 3-second delay while the arrow rests on the winner's segment
+                    setTimeout(() => {
+                        setCurrentRotation(0); // Reset the wheel rotation
+                        setIsSpinning(false); // Stop the spinning status
+                    }, spinDuration + 3000); // Spin duration + 3 seconds pause
                 });
             },
         });
@@ -190,7 +202,11 @@ const SpinTheWheel: React.FC = () => {
                 </motion.div>
             </div>
 
-            {winner && <p className="winner-label">Winner: {winner}</p>}
+            {winner && (
+                <div className="winner-reveal">
+                    🎉 The winner is: <strong>{winner}</strong> 🎉
+                </div>
+            )}
 
             <button className="spin-button" onClick={startWheel} disabled={isSpinning}>
                 Spin!
