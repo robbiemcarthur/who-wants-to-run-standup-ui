@@ -30,11 +30,15 @@ const SpinTheWheel: React.FC = () => {
             webSocketFactory: () => new SockJS(backendUrl + "/game"),
             onConnect: () => {
                 console.log("Connected to WebSocket");
-
                 // Subscribe to updates of the players list.
+
                 stompClient.subscribe("/topic/players", (message) => {
                     const data = JSON.parse(message.body);
                     setPlayers(data);
+                });
+
+                stompClient.publish({
+                    destination: "/app/initial-players",
                 });
 
                 // Subscribe to the winner result.
